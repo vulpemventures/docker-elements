@@ -1,13 +1,15 @@
 #!/bin/bash
 set -e
 
-LATEST_VERSION=$(curl --silent "https://api.github.com/repos/blockstream/liquid/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
-VERSION_NAME=$(echo $LATEST_VERSION | sed '1,/\./s/\./\-/')
+gh_owner=ElementsProject
+gh_repo=elements
 
-wget -qO- https://github.com/Blockstream/liquid/releases/download/$LATEST_VERSION/$VERSION_NAME-x86_64-linux-gnu.tar.gz | tar -xvz -C /tmp
+latest_version=$(wget -qO- https://api.github.com/repos/$gh_owner/$gh_repo/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+version=$(cut -d '-' -f2 <<< $latest_version)
+build=liquid-$version-x86_64-linux-gnu.tar.gz
 
-mv /tmp/$VERSION_NAME/bin/liquidd /usr/bin/liquidd
-mv /tmp/$VERSION_NAME/bin/liquid-cli /usr/bin/liquid-cli
-mv /tmp/$VERSION_NAME/bin/liquid-tx /usr/bin/liquid-tx
+wget -qO- https://github.com/$gh_owner/$gh_repo/releases/download/$latest_version/$build | tar -xvz -C /tmp
 
-rm -rf /tmp
+mv /tmp/liquid-$version/bin/liquidd /usr/bin/liquidd
+mv /tmp/liquid-$version/bin/liquid-cli /usr/bin/liquid-cli
+mv /tmp/liquid-$version/bin/liquid-tx /usr/bin/liquid-tx

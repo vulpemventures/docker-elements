@@ -1,15 +1,13 @@
 FROM ubuntu:18.04
 
-RUN apt-get update && apt-get install --yes curl wget
+RUN apt-get update && apt-get install -y wget
 
-RUN mkdir -p /tmp /script
+RUN mkdir -p /tmp /scripts
 
-ADD install /script
+ADD install /scripts
 
-RUN /script/install
+RUN /scripts/install && rm -rf /tmp /scripts
 
-EXPOSE 18884
-STOPSIGNAL SIGINT
+EXPOSE 18884 18886
 
-ENTRYPOINT ["liquidd"]
-CMD ["-datadir=/config"]
+ENTRYPOINT ["liquidd", "-datadir=/config"]
