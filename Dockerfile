@@ -8,6 +8,10 @@ ADD install /scripts
 
 RUN /scripts/install && rm -rf /tmp /scripts
 
+RUN useradd -ms /bin/bash ubuntu
+
+USER ubuntu
+
 EXPOSE 18884 18886
 
 ENTRYPOINT ["liquidd", "-datadir=/config"]
