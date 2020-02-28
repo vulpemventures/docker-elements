@@ -14,4 +14,4 @@ USER ubuntu
 
 EXPOSE 18884 18886
 
-ENTRYPOINT ["liquidd", "-datadir=/config"]
+ENTRYPOINT ["elementsd", "-datadir=/config"]
