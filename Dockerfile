@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:19.04 AS builder
 
 RUN apt-get update && apt-get install -y wget
 
@@ -6,7 +6,12 @@ RUN mkdir -p /tmp /scripts
 
 ADD install /scripts
 
-RUN /scripts/install && rm -rf /tmp /scripts
+RUN /scripts/install
+
+FROM ubuntu:19.04
+
+COPY --from=builder /elementsd /usr/bin/elementsd
+COPY --from=builder /elements-cli /usr/bin/elements-cli
 
 RUN useradd -ms /bin/bash ubuntu
 
