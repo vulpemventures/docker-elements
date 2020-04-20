@@ -1,4 +1,4 @@
-FROM ubuntu:19.04 AS builder
+FROM debian:stable-slim AS builder
 
 RUN apt-get update && apt-get install -y wget
 
@@ -8,7 +8,7 @@ ADD install /scripts
 
 RUN /scripts/install
 
-FROM ubuntu:19.04
+FROM debian:stable-slim
 
 COPY --from=builder /elementsd /usr/bin/elementsd
 COPY --from=builder /elements-cli /usr/bin/elements-cli
