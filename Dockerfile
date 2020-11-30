@@ -19,4 +19,4 @@ USER ubuntu
 
 EXPOSE 18884 18886
 
-ENTRYPOINT ["elementsd", "-datadir=/config"]
+ENTRYPOINT ["elementsd"]
