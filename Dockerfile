@@ -1,22 +1,31 @@
 FROM debian:stable-slim AS builder
 
-RUN apt-get update && apt-get install -y wget
+RUN apt-get update && apt-get install -y wget curl libzmq3-dev build-essential libtool autotools-dev automake pkg-config bsdmainutils python3 libssl-dev libevent-dev libboost-system-dev libboost-filesystem-dev libboost-chrono-dev libboost-test-dev libboost-thread-dev libdb-dev libdb++-dev
 
 RUN mkdir -p /tmp /scripts
 
-ADD install /scripts
+ADD compile /scripts
 
-RUN /scripts/install
+RUN chmod +x /scripts/compile && /scripts/compile
 
 FROM debian:stable-slim
 
-COPY --from=builder /elementsd /usr/bin/elementsd
-COPY --from=builder /elements-cli /usr/bin/elements-cli
+RUN apt-get update && apt-get install -y libboost-filesystem-dev \
+  libboost-thread-dev \
+  libevent-dev \
+  libsodium-dev \
+  libzmq3-dev \
+  libdb-dev \
+  libdb++-dev
 
-RUN useradd -ms /bin/bash ubuntu
+RUN useradd -ms /bin/bash elements
 
-USER ubuntu
+USER elements
 
-EXPOSE 18884 18886
+COPY --from=builder /elementsd /usr/local/bin/elementsd
+COPY --from=builder /elements-cli /usr/local/bin/elements-cli
 
-ENTRYPOINT ["elementsd"]
+# Prevents `VOLUME $HOME/.elements/` being created as owned by `root`
+RUN mkdir -p "$HOME/.elements/"
+
+ENTRYPOINT [ "elementsd" ]

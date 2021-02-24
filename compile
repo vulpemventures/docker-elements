@@ -1,0 +1,27 @@
+#!/bin/bash
+set -e
+
+## fetch latest
+gh_owner=ElementsProject
+gh_repo=elements
+
+latest_version=$(wget -qO- https://api.github.com/repos/$gh_owner/$gh_repo/releases/latest | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+wget -qO- https://github.com/$gh_owner/$gh_repo/archive/$latest_version.tar.gz | tar -xvz -C /tmp
+
+## enter in extracted-folder
+cd /tmp/$gh_repo-$latest_version
+
+# make dependencies
+cd ./depends
+make NO_QT=1 NO_UPNP=1
+cd ..
+
+# autogen and configure
+./autogen.sh
+./configure --without-gui --with-incompatible-bdb
+
+# make
+make
+
+mv ./src/elementsd /elementsd
+mv ./src/elements-cli /elements-cli
