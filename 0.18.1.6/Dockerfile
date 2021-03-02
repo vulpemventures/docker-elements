@@ -3,13 +3,13 @@ FROM debian:stable-slim AS builder
 # VERSION of Elements Core to be build
 ARG VERSION=0.18.1.6
 
-RUN apt-get update && apt-get install -y wget curl libzmq3-dev build-essential libtool autotools-dev automake pkg-config bsdmainutils python3 libssl-dev libevent-dev libboost-system-dev libboost-filesystem-dev libboost-chrono-dev libboost-test-dev libboost-thread-dev libdb-dev libdb++-dev
+RUN apt-get update && apt-get install -y wget curl libzmq3-dev build-essential libtool autotools-dev automake pkg-config bsdmainutils python3 libssl-dev libevent-dev libboost-system-dev libboost-filesystem-dev libboost-chrono-dev libboost-test-dev libboost-thread-dev libdb-dev libdb++-dev libdb4.8
 
 RUN wget -qO- https://github.com/ElementsProject/elements/archive/elements-$VERSION.tar.gz | tar -xvz -C /tmp
 
 RUN cd /tmp/elements-elements-$VERSION/depends && make NO_QT=1 NO_UPNP=1 && cd .. && \
   ./autogen.sh && \
-  ./configure --without-gui && \
+  ./configure --without-gui --with-incompatible-bdb && \
   make && \
   mv ./src/elementsd /elementsd && \
   mv ./src/elements-cli /elements-cli
