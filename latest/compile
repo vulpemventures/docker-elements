@@ -18,7 +18,7 @@ cd ..
 
 # autogen and configure
 ./autogen.sh
-./configure --without-gui --with-incompatible-bdb
+./configure --without-gui
 
 # make
 make
