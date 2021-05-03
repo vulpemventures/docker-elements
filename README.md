@@ -1,15 +1,15 @@
 # Docker liquid
 
-Dockerfile of the public image [vulpemventures/liquid:latest](https://hub.docker.com/r/vulpemventures/liquid)
+Dockerfile of the public image [ghcr.io/vulpemventures/elements:latest](https://github.com/orgs/vulpemventures/packages/container/package/elements)
 
 Pull the image:
 
 ```bash
-$ docker pull vulpemventures/liquid
+$ docker pull ghcr.io/vulpemventures/elements:latest
 ```
 
 Run the image:
 
 ```bash
-$ docker run -p 18884:18884 -v path/to/liquid.conf:/config -d vulpemventures/liquid
+$ docker run -v path/to/liquid.conf:/home/elements/.elements -d ghcr.io/vulpemventures/elements:latest
 ```
