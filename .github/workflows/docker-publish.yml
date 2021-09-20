@@ -21,18 +21,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-      
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v1
-      
-      - name: Available platforms
-        run: echo ${{ steps.buildx.outputs.platforms }}
-
       - name: Build image
-        run: docker buildx build --platform linux/arm64,linux/amd64 --file ./$VERSION/Dockerfile --tag $IMAGE_NAME --output "type=registry" .
+        run: docker build . --file ./$VERSION/Dockerfile --tag $IMAGE_NAME
 
 
       - name: Login to GitHub Container Registry
