@@ -1,37 +1,30 @@
-FROM debian:stable-slim AS builder
+FROM debian:stretch-slim as builder
 
-# VERSION of Elements Core to be build
+# VERSION of Elements Core to be download
 ARG VERSION=0.21.0
+ARG TARGETPLATFORM
 
-RUN apt-get update && apt-get install -y wget curl libzmq3-dev build-essential libtool autotools-dev automake pkg-config bsdmainutils python3 libssl-dev libevent-dev libboost-system-dev libboost-filesystem-dev libboost-chrono-dev libboost-test-dev libboost-thread-dev libdb-dev libdb++-dev libdb4.8
+RUN set -ex \
+  && if [ "${TARGETPLATFORM}" = "linux/amd64" ]; then export TARGETPLATFORM=x86_64-linux-gnu; fi \
+  && if [ "${TARGETPLATFORM}" = "linux/arm64" ]; then export TARGETPLATFORM=aarch64-linux-gnu; fi \
+	&& apt-get update \
+	&& apt-get install -qq --no-install-recommends ca-certificates wget \
+	&& cd /tmp \
+	&& wget -qO elements.tar.gz "https://github.com/ElementsProject/elements/releases/download/elements-$VERSION/elements-elements-$VERSION-$TARGETPLATFORM.tar.gz" \
+	&& mkdir bin \
+	&& tar -xzvf elements.tar.gz -C /tmp/bin --strip-components=2 "elements-elements-$VERSION/bin/elements-cli" "elements-elements-$VERSION/bin/elementsd"
 
-RUN wget -qO- https://github.com/ElementsProject/elements/archive/elements-$VERSION.tar.gz | tar -xvz -C /tmp
+FROM debian:stretch-slim
 
-RUN cd /tmp/elements-elements-$VERSION/depends && make NO_QT=1 NO_UPNP=1 && cd .. && \
-  ./autogen.sh && \
-  ./configure --without-gui --with-incompatible-bdb && \
-  make && \
-  mv ./src/elementsd /elementsd && \
-  mv ./src/elements-cli /elements-cli
+COPY --from=builder "/tmp/bin" /usr/local/bin
 
-FROM debian:stable-slim
-
-RUN apt-get update && apt-get install -y libboost-filesystem-dev \
-  libboost-thread-dev \
-  libevent-dev \
-  libsodium-dev \
-  libzmq3-dev \
-  libdb-dev \
-  libdb++-dev
-
-RUN useradd -ms /bin/bash elements
+RUN groupadd -r elements && useradd -r -m -g elements elements
 
 USER elements
 
-COPY --from=builder /elementsd /usr/local/bin/elementsd
-COPY --from=builder /elements-cli /usr/local/bin/elements-cli
-
-# Prevents `VOLUME $HOME/.elements/` being created as owned by `root`
-RUN mkdir -p "$HOME/.elements/"
+RUN mkdir -p "$HOME/.elements/" \
+  && chown -R elements:elements /home/elements/.elements
 
 ENTRYPOINT [ "elementsd" ]
+
+
