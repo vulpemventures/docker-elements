@@ -3,9 +3,6 @@ FROM debian:stretch-slim as builder
 # VERSION of Elements Core to be download
 ARG VERSION=0.21.0.2
 ARG TARGETPLATFORM
-# $USER name, and data $DIR to be used in the `final` image
-ARG USER=elements
-ARG DIR=/data
 
 RUN set -ex \
   && if [ "${TARGETPLATFORM}" = "linux/amd64" ]; then export TARGETPLATFORM=x86_64-linux-gnu; fi \
@@ -18,6 +15,10 @@ RUN set -ex \
 	&& tar -xzvf elements.tar.gz -C /tmp/bin --strip-components=2 "elements-elements-$VERSION/bin/elements-cli" "elements-elements-$VERSION/bin/elementsd"
 
 FROM debian:stretch-slim
+
+# $USER name, and data $DIR to be used in the `final` image
+ARG USER=elements
+ARG DIR=/data
 
 COPY --from=builder "/tmp/bin" /usr/local/bin
 
