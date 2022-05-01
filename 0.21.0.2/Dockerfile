@@ -18,7 +18,7 @@ FROM debian:stretch-slim
 
 # $USER name, and data $DIR to be used in the `final` image
 ARG USER=elements
-ARG DIR=/data
+ARG DIR=/home/elements
 
 COPY --from=builder "/tmp/bin" /usr/local/bin
 
