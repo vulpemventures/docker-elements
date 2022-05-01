@@ -3,6 +3,9 @@ FROM debian:stretch-slim as builder
 # VERSION of Elements Core to be download
 ARG VERSION=0.21.0.2
 ARG TARGETPLATFORM
+# $USER name, and data $DIR to be used in the `final` image
+ARG USER=elements
+ARG DIR=/data
 
 RUN set -ex \
   && if [ "${TARGETPLATFORM}" = "linux/amd64" ]; then export TARGETPLATFORM=x86_64-linux-gnu; fi \
@@ -18,12 +21,20 @@ FROM debian:stretch-slim
 
 COPY --from=builder "/tmp/bin" /usr/local/bin
 
-RUN groupadd -r elements && useradd -r -m -g elements elements
+# NOTE: Default GID == UID == 1000
+RUN adduser --disabled-password \
+            --home "$DIR/" \
+            --gecos "" \
+            "$USER"
 
-USER elements
+USER $USER
 
-RUN mkdir -p "$HOME/.elements/" \
-  && chown -R elements:elements /home/elements/.elements
+# Prevents `VOLUME $DIR/.elements/` being created as owned by `root`
+RUN mkdir -p "$DIR/.elements/"
+
+# Expose volume containing all `elementsd` data
+VOLUME $DIR/.elements/
+
 
 ENTRYPOINT [ "elementsd" ]
 
