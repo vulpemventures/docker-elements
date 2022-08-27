@@ -10,7 +10,7 @@ RUN set -ex \
 	&& apt-get update \
 	&& apt-get install -qq --no-install-recommends ca-certificates wget \
 	&& cd /tmp \
-	&& wget -qO elements.tar.gz "https://github.com/ElementsProject/elements/releases/download/elements-$VERSION/elements-elements-$VERSION-$TARGETPLATFORM.tar.gz" \
+	&& wget -qO elements.tar.gz "https://github.com/psgreco/elements/releases/download/elements-$VERSION/elements-elements-$VERSION-$TARGETPLATFORM.tar.gz" \
 	&& mkdir bin \
 	&& tar -xzvf elements.tar.gz -C /tmp/bin --strip-components=2 "elements-elements-$VERSION/bin/elements-cli" "elements-elements-$VERSION/bin/elementsd"
 
