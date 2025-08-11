@@ -1,4 +1,4 @@
-FROM debian:buster-slim as builder
+FROM debian:bookworm-slim AS builder
 
 # VERSION of Elements Core to be download
 ARG VERSION=23.3.0
