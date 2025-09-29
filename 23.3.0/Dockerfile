@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim AS builder
+FROM debian:trixie-slim AS builder
 
 # VERSION of Elements Core to be download
 ARG VERSION=23.3.0
@@ -14,7 +14,7 @@ RUN set -ex \
 	&& mkdir bin \
 	&& tar -xzvf elements.tar.gz -C /tmp/bin --strip-components=2 "elements-$VERSION/bin/elements-cli" "elements-$VERSION/bin/elementsd"
 
-FROM debian:stretch-slim
+FROM debian:trixie-slim
 
 # $USER name, and data $DIR to be used in the `final` image
 ARG USER=elements
