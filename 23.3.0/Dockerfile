@@ -23,10 +23,15 @@ ARG DIR=/home/elements
 COPY --from=builder "/tmp/bin" /usr/local/bin
 
 # NOTE: Default GID == UID == 1000
-RUN adduser --disabled-password \
-            --home "$DIR/" \
-            --gecos "" \
-            "$USER"
+RUN useradd -M \
+            -d "$DIR/" \
+            -s /usr/sbin/nologin \
+            -u 1000 \
+            -U \
+            -c "" \
+            "$USER" && \
+			mkdir -p "$DIR" && \
+			chown -R "$USER:$USER" "$DIR/"
 
 USER $USER
 
