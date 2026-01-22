@@ -9,7 +9,7 @@ RUN wget -qO- https://github.com/ElementsProject/elements/archive/elements-$VERS
 
 RUN cd /tmp/elements-elements-$VERSION/depends && make NO_QT=1 NO_UPNP=1 && cd .. && \
   ./autogen.sh && \
-  ./configure --without-gui --with-incompatible-bdb && \
+  ./configure --enable-debug --without-gui --with-incompatible-bdb && \
   make && \
   mv ./src/elementsd /elementsd && \
   mv ./src/elements-cli /elements-cli
